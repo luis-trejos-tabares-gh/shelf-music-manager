@@ -1,12 +1,13 @@
-# Music catalog
+# Shelf
 
-Personal library for organizing albums, artists, and songs, plus song playlists. Not a player — streaming links and Spotify sync come later.
+Personal library for organizing albums, artists, and songs on typed shelves, plus song playlists. Not a player — streaming links and Spotify sync come later.
 
 ## Stack
 
 - Next.js (App Router) + TypeScript + Tailwind
 - Supabase (local CLI and hosted)
-- MusicBrainz + Odesli clients (no feature routes yet)
+- MusicBrainz for identity, discography, and search
+- Streaming-link APIs are deferred — the public Odesli/Songlink API was retired in July 2026
 
 ## Setup
 
@@ -30,7 +31,8 @@ Copy `API URL`, `anon key`, and `service_role key` into `.env.local`:
 NEXT_PUBLIC_SUPABASE_URL=http://127.0.0.1:54321
 NEXT_PUBLIC_SUPABASE_ANON_KEY=...
 SUPABASE_SERVICE_ROLE_KEY=...
-MUSICBRAINZ_USER_AGENT=music-management-engine/0.1.0 (you@example.com)
+MUSICBRAINZ_USER_AGENT=shelf/0.1.0 (you@example.com)
+SETLISTFM_API_KEY=   # optional; https://www.setlist.fm/settings/api
 ```
 
 ```bash
@@ -51,18 +53,30 @@ Create a project, run the SQL in `supabase/migrations/` (or `supabase db push` a
 
 | Script | Purpose |
 | --- | --- |
-| `npm run dev` | Next.js placeholder app |
+| `npm run dev` | Next.js app |
 | `npm run db:start` / `db:stop` | Local Supabase stack |
 | `npm run db:reset` | Reset DB and apply migrations |
 | `npm run db:types` | Generate TypeScript types from local Postgres |
 
 ## Data model (short)
 
-- **Collections** are homogeneous shelves: `album`, `artist`, or `recording`
+- **Shelves** are homogeneous: `album`, `artist`, or `recording`
 - **Playlists** are ordered songs (`spotify_playlist_id` reserved for later sync)
 - No like / love / rating tables
 - Catalog rows use MusicBrainz IDs; platform IDs live in `*_external_ids`
+- `availability` is a generic cached payload (`payload` + `source`), unused until a link provider is chosen
+
+## App routes
+
+- `/` — home
+- `/signup` and `/login` — email/password (local Auth skips email confirmation)
+- `/search` — MusicBrainz search; add to a matching shelf or playlist
+- `/shelves` and `/playlists` — create and browse shelves
+- `/artists/[id]`, `/releases/[id]`, `/recordings/[id]` — dossiers (Wikipedia bio/photo, Cover Art Archive fronts, recent Setlist.fm shows when `SETLISTFM_API_KEY` is set)
+- `/following` — artists you follow
+
+Artist bios resolve MusicBrainz Wikipedia **or** Wikidata → English Wikipedia. Album covers come from Cover Art Archive. Setlists are cached 24h in `artist_setlists` and omitted when the API key is missing.
 
 ## Not in this skeleton
 
-Feature routes, auth UI, Spotify import/export, lyrics, or recommendation jobs.
+Spotify import/export, lyrics, recommendation jobs, or the retired Odesli/Songlink API.

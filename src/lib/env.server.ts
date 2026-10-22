@@ -9,7 +9,7 @@ export function getMusicBrainzUserAgent() {
   return z.string().min(1).parse(process.env.MUSICBRAINZ_USER_AGENT);
 }
 
-export function getOdesliApiKey() {
-  const key = process.env.ODESLI_API_KEY;
+export function getSetlistFmApiKey() {
+  const key = process.env.SETLISTFM_API_KEY?.trim();
   return key ? key : undefined;
 }

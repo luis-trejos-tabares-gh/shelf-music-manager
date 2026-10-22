@@ -24,3 +24,68 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@keyframes shelf-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shelf-pulse {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+@keyframes shelf-toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shelf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.shelf-fade-up {
+  animation: shelf-fade-up 0.4s ease;
+}
+
+.shelf-skeleton {
+  animation: shelf-pulse 1.2s ease-in-out infinite;
+}
+
+.shelf-toast {
+  animation: shelf-toast-in 0.25s ease;
+}
+
+.shelf-spinner {
+  display: inline-block;
+  width: 0.85rem;
+  height: 0.85rem;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 9999px;
+  animation: shelf-spin 0.6s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .shelf-fade-up,
+  .shelf-skeleton,
+  .shelf-toast,
+  .shelf-spinner {
+    animation: none;
+  }
+}
